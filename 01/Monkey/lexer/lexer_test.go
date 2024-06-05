@@ -6,7 +6,7 @@ import (
 )
 
 func TestNextToken(t *testing.T) {
-	input := `=+(){},*`
+	input := `=+(){},;`
 	// Raw string literals are character sequences between back quotes ``. Within the quotes, any character is legal except back quote.
 	// Raw string literals to be interpreted
 	tests := []struct {
