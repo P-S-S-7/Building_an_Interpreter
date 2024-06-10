@@ -110,7 +110,7 @@ func (es *ExpressionStatement) String() string {
 
 //expressions
 
-// struct to parse integer literal expression
+// struct for integer literal expression
 type IntegerLiteral struct {
 	Token token.Token
 	Value int64 //actual value of the integer literal
@@ -120,7 +120,7 @@ func (il *IntegerLiteral) expressionNode()      {}
 func (il *IntegerLiteral) TokenLiteral() string { return il.Token.Literal }
 func (il *IntegerLiteral) String() string       { return il.Token.Literal }
 
-// struct to parse prefix operator expression
+// struct for prefix operator expression
 type PrefixExpression struct {
 	Token    token.Token //The prefix token, e.g. !
 	Operator string
@@ -135,6 +135,28 @@ func (pe *PrefixExpression) String() string {
 	out.WriteString("(")
 	out.WriteString(pe.Operator)
 	out.WriteString(pe.Right.String())
+	out.WriteString(")")
+
+	return out.String()
+}
+
+// struct for infix operator expression
+type InfixExpression struct {
+	Token    token.Token //The infix token, e.g. +
+	Left     Expression
+	Operator string
+	Right    Expression
+}
+
+func (oe *InfixExpression) expressionNode()      {}
+func (oe *InfixExpression) TokenLiteral() string { return oe.Token.Literal }
+func (oe *InfixExpression) String() string {
+	var out bytes.Buffer
+
+	out.WriteString("(")
+	out.WriteString(oe.Left.String())
+	out.WriteString(" " + oe.Operator + " ")
+	out.WriteString(oe.Right.String())
 	out.WriteString(")")
 
 	return out.String()
