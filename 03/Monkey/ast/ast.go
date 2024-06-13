@@ -8,14 +8,16 @@ import (
 
 type Node interface {
 	TokenLiteral() string
-	String() string
+	String() string // string based representation of  AST nodes for comparison and debugging purposes
 }
 
+// every statement node must implement this interface
 type Statement interface {
 	Node
 	statementNode()
 }
 
+// every expression node must implement this interface
 type Expression interface {
 	Node
 	expressionNode()
@@ -23,7 +25,7 @@ type Expression interface {
 
 // root node
 type Program struct {
-	Statements []Statement
+	Statements []Statement //slice of statement
 }
 
 func (p *Program) TokenLiteral() string {
@@ -94,7 +96,7 @@ func (rs *ReturnStatement) String() string {
 	return out.String()
 }
 
-// --- node type 3
+// --- node type 3(wrapper for expressions)
 type ExpressionStatement struct {
 	Token      token.Token //the first token of the expression
 	Expression Expression
@@ -124,7 +126,7 @@ func (il *IntegerLiteral) String() string       { return il.Token.Literal }
 // struct for prefix operator expression
 type PrefixExpression struct {
 	Token    token.Token //The prefix token, e.g. !
-	Operator string
+	Operator string      //-, !
 	Right    Expression
 }
 
@@ -144,7 +146,7 @@ func (pe *PrefixExpression) String() string {
 // struct for infix operator expression
 type InfixExpression struct {
 	Token    token.Token //The infix token, e.g. +
-	Left     Expression
+	Left     Expression  // passed as argument to parser.parseInfixExpression
 	Operator string
 	Right    Expression
 }
@@ -178,7 +180,7 @@ type IfExpression struct {
 	Token       token.Token // the 'if' token
 	Condition   Expression
 	Consequence *BlockStatement
-	Alternative *BlockStatement
+	Alternative *BlockStatement //optional *BlockStatement
 }
 
 func (ie *IfExpression) expressionNode()      {}
@@ -199,8 +201,8 @@ func (ie *IfExpression) String() string {
 
 // struct for function literal expression
 type FunctionLiteral struct {
-	Token      token.Token // the 'fn' token
-	Parameters []*Identifier
+	Token      token.Token   // the 'fn' token
+	Parameters []*Identifier //can also be empty
 	Body       *BlockStatement
 }
 
@@ -225,7 +227,7 @@ func (fl *FunctionLiteral) String() string {
 // struct for call expression
 type CallExpression struct {
 	Token     token.Token // the '{' token
-	Function  Expression  // Identifier or FuncttionLiteral
+	Function  Expression  // Identifier or FunctionLiteral
 	Arguments []Expression
 }
 
