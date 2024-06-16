@@ -7,6 +7,14 @@ import (
 	"testing"
 )
 
+func testEval(input string) object.Object {
+	l := lexer.New(input)
+	p := parser.New(l)
+	program := p.ParseProgram()
+
+	return Eval(program)
+}
+
 // test evaluation of object.Integer
 func TestEvalIntegerExpression(t *testing.T) {
 	tests := []struct {
@@ -15,6 +23,8 @@ func TestEvalIntegerExpression(t *testing.T) {
 	}{
 		{"5", 5},
 		{"10", 10},
+		{"-5", -5},
+		{"-10", -10},
 	}
 	for _, tt := range tests {
 		evaluated := testEval(tt.input)
@@ -65,10 +75,25 @@ func testBooleanObject(t *testing.T, obj object.Object, expected bool) bool {
 	return true
 }
 
-func testEval(input string) object.Object {
-	l := lexer.New(input)
-	p := parser.New(l)
-	program := p.ParseProgram()
-
-	return Eval(program)
+// test evaluation of prefix expressions
+// prefix expression operator I - BANG Operator
+func TestBangOperator(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected bool
+	}{
+		{"!true", false},
+		{"!false", true},
+		{"!5", false},
+		{"!!true", true},
+		{"!!false", false},
+		{"!!5", true},
+	}
+	for _, tt := range tests {
+		evaluated := testEval(tt.input)
+		testBooleanObject(t, evaluated, tt.expected)
+	}
 }
+
+// prefix expression operator II - MINUS Operator
+//see extended func TestEvalIntegerExpression(t *testing.T)
