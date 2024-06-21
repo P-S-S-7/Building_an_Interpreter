@@ -226,7 +226,7 @@ func (fl *FunctionLiteral) String() string {
 
 // struct for call expression
 type CallExpression struct {
-	Token     token.Token // the '{' token
+	Token     token.Token // the '(' token
 	Function  Expression  // Identifier or FunctionLiteral
 	Arguments []Expression
 }
