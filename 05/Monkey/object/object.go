@@ -8,6 +8,7 @@ import (
 )
 
 type ObjectType string
+type BuiltinFunction func(args ...Object) Object //type defination for built-in functions
 
 const (
 	INTEGER_OBJ      = "INTEGER"
@@ -17,6 +18,7 @@ const (
 	ERROR_OBJ        = "ERROR"
 	FUNCTION_OBJ     = "FUNCTION"
 	STRING_OBJ       = "STRING"
+	BUILDIN_OBJ      = "BUILDIN"
 )
 
 type Object interface {
@@ -130,3 +132,12 @@ type String struct {
 
 func (s *String) Type() ObjectType { return STRING_OBJ }
 func (s *String) Inspect() string  { return s.Value }
+
+// wrapper for BuildinFuction
+// struct for IR of object.Buildin
+type Buildin struct {
+	Fn BuiltinFunction
+}
+
+func (b *Buildin) Type() ObjectType { return BUILDIN_OBJ }
+func (b *Buildin) Inspect() string  { return "buildin function" }
