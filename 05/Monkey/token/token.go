@@ -11,12 +11,12 @@ const (
 	ILLEGAL = "ILLEGAL"
 	EOF     = "EOF"
 
-	//Identifiers + literals
+	// Identifiers + literals
 	IDENT  = "IDENT"  // add, foobar, x, y, ...
 	INT    = "INT"    // 123456
 	STRING = "STRING" // "foobar"
 
-	////Operators
+	// Operators
 	PLUS     = "+"
 	ASSIGN   = "="
 	MINUS    = "-"
@@ -29,15 +29,18 @@ const (
 	EQ     = "=="
 	NOT_EQ = "!="
 
-	//Delimiters
+	// Delimiters
 	COMMA     = ","
 	SEMICOLON = ";"
 	LPAREN    = "("
 	RPAREN    = ")"
 	LBRACE    = "{"
 	RBRACE    = "}"
+	// array support (array literals and index operator)
+	LBRACKET = "["
+	RBRACKET = "]"
 
-	//Keywords
+	// Keywords
 	FUNCTION = "FUNCTION"
 	LET      = "LET"
 	IF       = "IF"
