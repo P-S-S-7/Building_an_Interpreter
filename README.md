@@ -37,10 +37,7 @@
     It ensures that the declarations and statements of a program are semantically correct.
 
 # REPL Loop
-    
-# Identifiers can also hold the value of an expression 
-# Token types and functions that parse the token will be associated via a Pratt parser.
-# Arrays are immutable in Monkey
+    read–eval–print loop
 
 # Statements
     Statements do not produce values.
@@ -99,3 +96,23 @@
     function call
     e.g. add(4, 7);
     <expression>(<comma separated expresssions>)
+
+@ Identifiers can also hold the value of an expression 
+@ Token types and functions that parse the token will be associated via a Pratt parser.
+@ Arrays are immutable in Monkey
+
+# Built-in functions
+    @ len(arg_1) - returns the size of the data structure (arg_1 can be a       string or array)
+    
+    @ first(arg_1) - returns first element of the array
+
+    @ last(arg_1) - returns last element of the array
+
+    @ rest(arg_1) - returns a new array containing all elements of the          array passed as argument, except the first one (Note that we’re           returning a newly allocated array.We’re not modifying the array           passed to rest:
+
+    @ push(arg_1, arg_2) - It adds a new element to the end of the array.
+      But it doesn’t modify the given array. Instead it allocates a new         array with the same elements as the old one plus the new, pushed
+      element. Arrays are immutable in Monkey.
+
+    @ part(arg_1, arg_2, arg_3) - It gives a subarray of array "arg_1"          starting at index "arg_2" upto index "arg_3" exclusive.It returns a       newly-allocated subarray.
+                   
