@@ -8,6 +8,7 @@ import (
 	"bufio"
 	"fmt"
 	"io"
+	"strings"
 )
 
 const PROMPT = ">> "
@@ -16,15 +17,33 @@ func Start(in io.Reader, out io.Writer) {
 	scanner := bufio.NewScanner(in)
 	env := object.NewEnvironment()
 
+	var inputLines []string
+
 	for {
-		fmt.Printf(PROMPT)
-		scanned := scanner.Scan() // reads the next line of input
+		if len(inputLines) == 0 {
+			fmt.Printf("%s", PROMPT)
+		} else {
+			fmt.Printf("%s", ".. ")
+		}
+
+		scanned := scanner.Scan()
 		if !scanned {
 			return
 		}
 
 		line := scanner.Text()
-		l := lexer.New(line)
+		if strings.HasSuffix(line, "\\") {
+			// remove the trailing backslash and store the line
+			inputLines = append(inputLines, strings.TrimSuffix(line, "\\"))
+			continue
+		}
+
+		// add the final line and join all lines together
+		inputLines = append(inputLines, line)
+		fullInput := strings.Join(inputLines, "\n")
+		inputLines = inputLines[:0] // clear the input lines
+
+		l := lexer.New(fullInput)
 		p := parser.New(l)
 
 		program := p.ParseProgram()
@@ -42,7 +61,7 @@ func Start(in io.Reader, out io.Writer) {
 	}
 }
 
-const MONKEY_FACE = `   
+const MONKEY_FACE = `
             __,__
    .--.  .-"     "-.  .--.
   / .. \/  .-. .-.  \/ .. \

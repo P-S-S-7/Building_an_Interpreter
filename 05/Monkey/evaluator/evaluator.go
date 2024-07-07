@@ -359,7 +359,7 @@ func evalArrayIndexExpression(array, index object.Object) object.Object {
 	max := int64(len(arrayObject.Elements) - 1)
 
 	if idx < 0 || idx > max {
-		return newError("Runtime Error: ArrayIndexOutOfBoundsException: Attempted to access index %d of array with length %d", idx, max)
+		return newError("array index out of bounds")
 	}
 
 	return arrayObject.Elements[idx]

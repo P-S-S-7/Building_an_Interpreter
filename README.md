@@ -40,6 +40,7 @@
     
 # Identifiers can also hold the value of an expression 
 # Token types and functions that parse the token will be associated via a Pratt parser.
+# Arrays are immutable in Monkey
 
 # Statements
     Statements do not produce values.
