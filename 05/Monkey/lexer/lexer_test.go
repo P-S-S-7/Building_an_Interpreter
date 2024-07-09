@@ -27,6 +27,7 @@ if (5 < 10) {
 "foobar"
 "foo bar"
 [1, 2];
+{"foo" : "bar"}
 `
 
 	// Raw string literals are character sequences between back quotes ``. Within the quotes, any character is legal except back quote.
@@ -116,6 +117,11 @@ if (5 < 10) {
 		{token.INT, "2"},
 		{token.RBRACKET, "]"},
 		{token.SEMICOLON, ";"},
+		{token.LBRACE, "{"},
+		{token.STRING, "foo"},
+		{token.COLON, ":"},
+		{token.STRING, "bar"},
+		{token.RBRACE, "}"},
 		{token.EOF, ""},
 	}
 

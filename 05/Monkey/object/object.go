@@ -4,6 +4,7 @@ import (
 	"Monkey/ast"
 	"bytes"
 	"fmt"
+	"hash/fnv"
 	"strings"
 )
 
@@ -20,11 +21,17 @@ const (
 	STRING_OBJ       = "STRING"
 	BUILDIN_OBJ      = "BUILDIN"
 	ARRAY_OBJ        = "ARRAY"
+	HASH_OBJ         = "HASH"
 )
 
 type Object interface {
 	Type() ObjectType
 	Inspect() string
+}
+
+// to check if the given object is usable as a hash key
+type Hashable interface {
+	HashKey() HashKey
 }
 
 // IR - Internal Representation
@@ -160,6 +167,73 @@ func (ao *Array) Inspect() string {
 	out.WriteString("[")
 	out.WriteString(strings.Join(elements, ", "))
 	out.WriteString("]")
+
+	return out.String()
+}
+
+// struct for IR of hashKey
+type HashKey struct {
+	Type  ObjectType
+	Value uint64
+}
+
+// cache for hash keys
+var hashKeyCache = make(map[Object]HashKey)
+
+func (b *Boolean) HashKey() HashKey {
+	var value uint64
+
+	if b.Value {
+		value = 1
+	} else {
+		value = 0
+	}
+
+	h1 := HashKey{Type: b.Type(), Value: value}
+	hashKeyCache[b] = h1
+
+	return h1
+}
+
+func (i *Integer) HashKey() HashKey {
+	h2 := HashKey{Type: i.Type(), Value: uint64(i.Value)}
+	hashKeyCache[i] = h2
+
+	return h2
+}
+
+func (s *String) HashKey() HashKey {
+	h := fnv.New64a()
+	h.Write([]byte(s.Value))
+
+	h3 := HashKey{Type: s.Type(), Value: h.Sum64()}
+	hashKeyCache[s] = h3
+
+	return h3
+}
+
+type HashPair struct {
+	Key   Object
+	Value Object
+}
+
+// struct for IR of object.Hash
+type Hash struct {
+	Pairs map[HashKey]HashPair
+}
+
+func (h *Hash) Type() ObjectType { return HASH_OBJ }
+func (h *Hash) Inspect() string {
+	var out bytes.Buffer
+
+	pairs := []string{}
+	for _, pair := range h.Pairs {
+		pairs = append(pairs, fmt.Sprintf("%s: %s", pair.Key.Inspect(), pair.Value.Inspect()))
+	}
+
+	out.WriteString("{")
+	out.WriteString(strings.Join(pairs, ", "))
+	out.WriteString("}")
 
 	return out.String()
 }

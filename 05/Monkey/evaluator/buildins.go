@@ -16,6 +16,8 @@ var buildins = map[string]*object.Buildin{
 				return &object.Integer{Value: int64(len(arg.Elements))}
 			case *object.String:
 				return &object.Integer{Value: int64(len(arg.Value))}
+			case *object.Hash:
+				return &object.Integer{Value: int64(len(arg.Pairs))}
 			default:
 				return newError("argument to `len` is not supported, got %s", args[0].Type())
 			}

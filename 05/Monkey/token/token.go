@@ -39,6 +39,8 @@ const (
 	// array support (array literals and index operator)
 	LBRACKET = "["
 	RBRACKET = "]"
+	// hashes support
+	COLON = ":"
 
 	// Keywords
 	FUNCTION = "FUNCTION"
