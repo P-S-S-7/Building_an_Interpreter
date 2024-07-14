@@ -2,6 +2,7 @@ package evaluator
 
 import (
 	"Monkey/object"
+	"fmt"
 )
 
 var buildins = map[string]*object.Buildin{
@@ -130,6 +131,15 @@ var buildins = map[string]*object.Buildin{
 			copy(partElements, arr.Elements[start:end])
 
 			return &object.Array{Elements: partElements}
+		},
+	},
+	"puts": &object.Buildin{
+		Fn: func(args ...object.Object) object.Object {
+			fmt.Printf("\n")
+			for _, arg := range args {
+				fmt.Println(arg.Inspect())
+			}
+			return NULL
 		},
 	},
 }
