@@ -1,10 +1,10 @@
 package object
 
 import (
-	"Monkey/ast"
 	"bytes"
 	"fmt"
 	"hash/fnv"
+	"interpreter/Monkey/ast"
 	"strings"
 )
 

@@ -1,12 +1,12 @@
 package main
 
 import (
-	"Monkey/evaluator"
-	"Monkey/lexer"
-	"Monkey/object"
-	"Monkey/parser"
 	"encoding/json"
 	"fmt"
+	"interpreter/Monkey/evaluator"
+	"interpreter/Monkey/lexer"
+	"interpreter/Monkey/object"
+	"interpreter/Monkey/parser"
 	"io"
 	"net/http"
 	"os"
