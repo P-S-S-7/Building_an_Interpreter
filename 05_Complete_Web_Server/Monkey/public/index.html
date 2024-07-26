@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monkey REPL</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #4a90e2, #d1e8ff);
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        header {
+            background: #003d6b;
+            color: #fff;
+            padding: 20px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+            border-bottom: 4px solid #4a90e2;
+        }
+        .container {
+            max-width: 800px;
+            width: 100%;
+            padding: 20px;
+            background: #fff;
+            color: #333;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            margin: 20px;
+        }
+        textarea {
+            width: calc(100% - 22px);
+            padding: 10px;
+            font-size: 16px;
+            border: 2px solid #4a90e2;
+            border-radius: 4px;
+            resize: vertical;
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+        }
+        textarea:focus {
+            border-color: #003d6b;
+            outline: none;
+        }
+        button {
+            background: linear-gradient(45deg, #003d6b, #4a90e2);
+            border: none;
+            color: white;
+            padding: 12px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 5px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background 0.3s, transform 0.2s;
+        }
+        button:hover {
+            background: linear-gradient(45deg, #4a90e2, #003d6b);
+            transform: scale(1.05);
+        }
+        .output-container {
+            margin-top: 20px;
+        }
+        .button-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .button-container a {
+            text-decoration: none;
+        }
+        .button-container button {
+            margin: 0 10px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Monkey Interpreter</h1>
+    </header>
+    <div class="container">
+        <form id="repl-form">
+            <textarea id="code-input" rows="10" placeholder="Type your Monkey code here..."></textarea><br>
+            <button type="submit">Run</button>
+        </form>
+        <div class="button-container">
+            <a href="https://github.com/P-S-S-7/Building_an_Interpreter/blob/main/README.md" target="_blank">
+                <button>Documentation</button>
+            </a>
+            <a href="https://github.com/P-S-S-7/Building_an_Interpreter" target="_blank">
+                <button>Code</button>
+            </a>
+        </div>
+        <div class="output-container">
+            <h2>Output</h2>
+            <pre id="output"></pre>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('repl-form').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const code = document.getElementById('code-input').value;
+            const response = await fetch('/run', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ code })
+            });
+            const result = await response.text();
+            document.getElementById('output').textContent = result;
+        });
+    </script>
+</body>
+</html>
