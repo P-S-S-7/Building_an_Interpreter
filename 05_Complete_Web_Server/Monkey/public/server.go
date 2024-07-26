@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"os"
 
 	"github.com/gorilla/mux"
 )
@@ -18,9 +19,16 @@ func main() {
 	r.HandleFunc("/", serveHTML)
 	r.HandleFunc("/run", runREPL).Methods("POST")
 
-	http.Handle("/", r)
-	fmt.Println("Server is listening on port 8080...")
-	http.ListenAndServe(":8080", nil)
+	port := getenv("PORT", "8080")
+	fmt.Printf("Server is listening on port %s...\n", port)
+	http.ListenAndServe(":"+port, r)
+}
+
+func getenv(key, defaultValue string) string {
+	if value, exists := os.LookupEnv(key); exists {
+		return value
+	}
+	return defaultValue
 }
 
 func serveHTML(w http.ResponseWriter, r *http.Request) {
