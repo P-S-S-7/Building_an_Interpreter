@@ -1,7 +1,6 @@
 package evaluator
 
 import (
-	"fmt"
 	"interpreter/Monkey/object"
 )
 
@@ -135,11 +134,12 @@ var buildins = map[string]*object.Buildin{
 	},
 	"puts": &object.Buildin{
 		Fn: func(args ...object.Object) object.Object {
-			fmt.Printf("\n")
+			var output string
 			for _, arg := range args {
-				fmt.Println(arg.Inspect())
+				output += arg.Inspect() + "\n"
 			}
-			return NULL
+			// instead of printing, return the captured output
+			return &object.String{Value: output}
 		},
 	},
 }

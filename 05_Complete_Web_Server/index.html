@@ -4,121 +4,67 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Monkey Interpreter</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background: linear-gradient(135deg, #4a90e2, #d1e8ff);
-            color: #333;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-        }
-        header {
-            background: #003d6b;
-            color: #fff;
-            padding: 20px;
-            width: 100%;
-            text-align: center;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-            border-bottom: 4px solid #4a90e2;
-        }
-        .container {
-            max-width: 800px;
-            width: 100%;
-            padding: 20px;
-            background: #fff;
-            color: #333;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            margin: 20px;
-        }
-        textarea {
-            width: calc(100% - 22px);
-            padding: 10px;
-            font-size: 16px;
-            border: 2px solid #4a90e2;
-            border-radius: 4px;
-            resize: vertical;
-            box-sizing: border-box;
-            transition: border-color 0.3s;
-        }
-        textarea:focus {
-            border-color: #003d6b;
-            outline: none;
-        }
-        button {
-            background: linear-gradient(45deg, #003d6b, #4a90e2);
-            border: none;
-            color: white;
-            padding: 12px 20px;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 16px;
-            margin: 5px;
-            cursor: pointer;
-            border-radius: 4px;
-            transition: background 0.3s, transform 0.2s;
-        }
-        button:hover {
-            background: linear-gradient(45deg, #4a90e2, #003d6b);
-            transform: scale(1.05);
-        }
-        .output-container {
-            margin-top: 20px;
-        }
-        .button-container {
-            margin-top: 20px;
-            text-align: center;
-        }
-        .button-container a {
-            text-decoration: none;
-        }
-        .button-container button {
-            margin: 0 10px;
+        .hidden {
+            display: none;
         }
     </style>
 </head>
-<body>
-    <header>
-        <h1>Monkey Interpreter</h1>
-    </header>
-    <div class="container">
-        <form id="repl-form">
-            <textarea id="code-input" rows="10" placeholder="Type your Monkey code here..."></textarea><br>
-            <button type="submit">Run</button>
-        </form>
-        <div class="button-container">
-            <a href="https://github.com/P-S-S-7/Building_an_Interpreter/blob/main/README.md" target="_blank">
-                <button>Documentation</button>
-            </a>
-            <a href="https://github.com/P-S-S-7/Building_an_Interpreter" target="_blank">
-                <button>Code</button>
-            </a>
-        </div>
-        <div class="output-container">
-            <h2>Output</h2>
-            <pre id="output"></pre>
+<body class="bg-gradient-to-br from-blue-500 to-blue-200 text-gray-900">
+    <div id="content">
+        <header class="bg-blue-900 text-white p-5 w-full text-center shadow-lg border-b-4 border-blue-500">
+            <h1 class="text-3xl font-bold">Monkey Interpreter</h1>
+        </header>
+        <div class="container mx-auto p-6 bg-white text-gray-800 shadow-lg my-8 w-full max-w-lg lg:max-w-2xl xl:max-w-4xl">
+            <form id="repl-form">
+                <textarea id="code-input" rows="10" placeholder="Type your Monkey code here..." class="w-full p-3 border-2 border-blue-500 rounded-md resize-y focus:border-blue-900 focus:outline-none"></textarea>
+                <button type="submit" class="mt-4 w-full bg-gradient-to-r from-blue-900 to-blue-500 text-white py-2 rounded-md hover:bg-gradient-to-r hover:from-blue-500 hover:to-blue-900 transform hover:scale-105 transition duration-300">Run</button>
+            </form>
+
+            <div class="button-container mt-6 flex justify-center space-x-4">
+                <a href="https://github.com/P-S-S-7/Building_an_Interpreter/blob/main/README.md" target="_blank">
+                    <button class="bg-blue-500 hover:bg-blue-900 text-white py-2 px-4 rounded-md transition duration-300">Documentation</button>
+                </a>
+                <a href="https://github.com/P-S-S-7/Building_an_Interpreter" target="_blank">
+                    <button class="bg-blue-500 hover:bg-blue-900 text-white py-2 px-4 rounded-md transition duration-300">Code</button>
+                </a>
+            </div>
+            <div class="output-container mt-6">
+                <h2 class="text-xl font-semibold">Output</h2>
+                <pre id="output" class="bg-gray-100 p-4 rounded-md mt-2"></pre>
+            </div>
         </div>
     </div>
 
     <script>
-        document.getElementById('repl-form').addEventListener('submit', async function(event) {
+        document.getElementById('repl-form').addEventListener('submit', async function (event) {
             event.preventDefault();
+
             const code = document.getElementById('code-input').value;
-            const response = await fetch('/run', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ code })
-            });
-            const result = await response.text();
-            document.getElementById('output').textContent = result;
+            const output = document.getElementById('output');
+
+            output.textContent = "";
+
+            try {
+                const response = await fetch('/run', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ code })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.text();
+                output.textContent = result;
+            } catch (error) {
+                console.error('Error during code execution:', error);
+                output.textContent = "Error connecting to the backend.";
+            }
         });
     </script>
 </body>

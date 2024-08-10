@@ -3,13 +3,14 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io"
+	"net/http"
+	"os"
+
 	"interpreter/Monkey/evaluator"
 	"interpreter/Monkey/lexer"
 	"interpreter/Monkey/object"
 	"interpreter/Monkey/parser"
-	"io"
-	"net/http"
-	"os"
 
 	"github.com/gorilla/mux"
 )
@@ -21,7 +22,9 @@ func main() {
 
 	port := getenv("PORT", "8080")
 	fmt.Printf("Server is listening on port %s...\n", port)
-	http.ListenAndServe(":"+port, r)
+
+	http.Handle("/", r)
+	http.ListenAndServe(":"+port, nil)
 }
 
 func getenv(key, defaultValue string) string {
@@ -36,39 +39,48 @@ func serveHTML(w http.ResponseWriter, r *http.Request) {
 }
 
 func runREPL(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("REPL request received")
 	var req struct {
 		Code string `json:"code"`
 	}
 	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
 		http.Error(w, "Invalid request", http.StatusBadRequest)
+		fmt.Println("Invalid request:", err)
 		return
 	}
 
 	env := object.NewEnvironment()
-	evaluated, errors := evaluate(req.Code, env)
+	output, errors := evaluate(req.Code, env)
 	if len(errors) != 0 {
 		printParserErrors(w, errors)
 		return
 	}
 
-	if evaluated != nil && evaluated.Inspect() != "null" {
-		io.WriteString(w, evaluated.Inspect())
-	} else {
-		io.WriteString(w, "null")
-	}
+	io.WriteString(w, output)
 }
 
-func evaluate(input string, env *object.Environment) (object.Object, []string) {
+func evaluate(input string, env *object.Environment) (string, []string) {
 	l := lexer.New(input)
 	p := parser.New(l)
 	program := p.ParseProgram()
 	if len(p.Errors()) != 0 {
-		return nil, p.Errors()
+		return "", p.Errors()
 	}
 
-	evaluated := evaluator.Eval(program, env)
-	return evaluated, nil
+	var result string
+	for _, stmt := range program.Statements {
+		evaluated := evaluator.Eval(stmt, env)
+		if evaluated != nil {
+			if str, ok := evaluated.(*object.String); ok {
+				result += str.Value
+			} else if evaluated.Inspect() != "null" {
+				result += evaluated.Inspect() + "\n"
+			}
+		}
+	}
+
+	return result, nil
 }
 
 const MONKEY_FACE = `
